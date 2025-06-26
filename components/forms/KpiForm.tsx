@@ -17,6 +17,7 @@ export const KpiForm: React.FC<KpiFormProps> = ({ onSubmit, initialData, mode })
   const [category, setCategory] = useState('');
   const [clientNeedAlignment, setClientNeedAlignment] = useState('');
   const [roiDemonstration, setRoiDemonstration] = useState('');
+  const [lowerIsBetter, setLowerIsBetter] = useState(false);
 
   useEffect(() => {
     if (initialData) {
@@ -27,6 +28,7 @@ export const KpiForm: React.FC<KpiFormProps> = ({ onSubmit, initialData, mode })
       setCategory(initialData.category || '');
       setClientNeedAlignment(initialData.clientNeedAlignment || '');
       setRoiDemonstration(initialData.roiDemonstration || '');
+      setLowerIsBetter(initialData.lowerIsBetter || false);
     } else {
       setName('');
       setDescription('');
@@ -35,6 +37,7 @@ export const KpiForm: React.FC<KpiFormProps> = ({ onSubmit, initialData, mode })
       setCategory('');
       setClientNeedAlignment('');
       setRoiDemonstration('');
+      setLowerIsBetter(false);
     }
   }, [initialData]);
 
@@ -50,6 +53,7 @@ export const KpiForm: React.FC<KpiFormProps> = ({ onSubmit, initialData, mode })
       category,
       clientNeedAlignment,
       roiDemonstration,
+      lowerIsBetter,
     };
 
     if (mode === 'edit' && initialData) {
@@ -119,6 +123,18 @@ export const KpiForm: React.FC<KpiFormProps> = ({ onSubmit, initialData, mode })
             step="any"
             />
         </div>
+      </div>
+      <div className="flex items-center space-x-2 p-1.5 hover:bg-border-color rounded cursor-pointer">
+        <input
+            type="checkbox"
+            id="kpi-lower-is-better"
+            checked={lowerIsBetter}
+            onChange={(e) => setLowerIsBetter(e.target.checked)}
+            className="form-checkbox h-4 w-4 text-primary border-light-border rounded focus:ring-primary bg-sidebar-bg"
+        />
+        <label htmlFor="kpi-lower-is-better" className="text-sm text-medium-text cursor-pointer">
+            Lower values are better for this KPI (e.g., for tracking attrition, cancellations).
+        </label>
       </div>
       <div>
         <label htmlFor="kpi-category" className={labelClasses}>Category (Optional)</label>

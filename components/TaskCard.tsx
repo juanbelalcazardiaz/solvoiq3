@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Task, Client, TeamMember, TaskStatus } from '../types';
-import { Edit2, Trash2, UserCircle2, Briefcase, Clock, AlertCircle, CheckCircle, PlayCircle, PauseCircle } from 'lucide-react';
+import { Edit2, Trash2, UserCircle2, Briefcase, Clock, AlertTriangle, CheckCircle, PlayCircle, PauseCircle } from 'lucide-react';
 
 interface TaskCardProps {
   task: Task;
@@ -39,7 +39,7 @@ const getDueDateInfo = (dueDateStr: string, status: TaskStatus): { textClass: st
 
   if (status === TaskStatus.COMPLETED) return { textClass: 'text-medium-text', isUrgent: false, isDueToday: false };
 
-  if (diffDays < 0) return { textClass: 'text-danger font-semibold', icon: <AlertCircle size={14} className="mr-1 inline-block" />, isUrgent: true, isDueToday: false };
+  if (diffDays < 0) return { textClass: 'text-danger font-semibold', icon: <AlertTriangle size={14} className="mr-1 inline-block" />, isUrgent: true, isDueToday: false };
   if (diffDays === 0) return { textClass: 'text-danger font-semibold', icon: <Clock size={14} className="mr-1 inline-block text-danger" />, isUrgent: true, isDueToday: true };
   if (diffDays <= 3) return { textClass: 'text-warning', icon: <Clock size={14} className="mr-1 inline-block text-warning" />, isUrgent: true, isDueToday: false };
   
@@ -100,7 +100,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({
       
       <div className="text-xs text-medium-text mb-2 flex items-center">
         <UserCircle2 size={11} className="mr-1.5 text-light-text" />
-        {task.assignedTo}
+        {teamMember?.name || 'Unassigned'}
       </div>
 
       {/* Timer and Completion Controls */}
@@ -147,4 +147,3 @@ export const TaskCard: React.FC<TaskCardProps> = ({
     </div>
   );
 };
-

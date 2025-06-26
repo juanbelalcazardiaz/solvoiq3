@@ -27,7 +27,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, initialData, mode,
   const [description, setDescription] = useState('');
   const [status, setStatus] = useState<TaskStatus>(TaskStatus.PENDING);
   const [dueDate, setDueDate] = useState('');
-  const [assignedTo, setAssignedTo] = useState(currentUser.name); // Default to current user
+  const [assignedTo, setAssignedTo] = useState(currentUser.id); // Default to current user's ID
   const [clientId, setClientId] = useState<string | null>(null);
   const [priority, setPriority] = useState<TaskPriority>(TaskPriority.MEDIUM);
   
@@ -56,14 +56,14 @@ export const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, initialData, mode,
       setTitle('');
       setDescription('');
       setStatus(TaskStatus.PENDING);
-      setAssignedTo(currentUser.name); // Default to current user on add
+      setAssignedTo(currentUser.id); // Default to current user's ID on add
       setClientId(null);
     }
     setAiSuggestedPriority(null);
     setAiPriorityRationale(null);
     setAiSuggestedSubtasks([]);
     setAiError(null);
-  }, [initialData, mode, currentUser.name]); // Add currentUser.name to dependency array
+  }, [initialData, mode, currentUser.id]);
 
   const handleSuggestDescription = async () => {
     if (!title.trim()) {
@@ -331,7 +331,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, initialData, mode,
         <div>
           <label htmlFor="task-assignedTo" className={labelClasses}>Assigned To</label>
           <select id="task-assignedTo" value={assignedTo} onChange={(e) => setAssignedTo(e.target.value)} className={`${inputBaseClasses} appearance-none`}>
-            {teamMembers.map(member => <option key={member.id} value={member.name} className="bg-input-bg text-dark-text">{member.name}</option>)}
+            {teamMembers.map(member => <option key={member.id} value={member.id} className="bg-input-bg text-dark-text">{member.name}</option>)}
           </select>
         </div>
       </div>

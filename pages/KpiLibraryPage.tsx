@@ -1,6 +1,5 @@
 
 
-
 import React from 'react';
 import { Kpi, FormMode } from '../types';
 import { PlusCircle, Edit2, Trash2, TrendingUp, TrendingDown, Minus, BarChartHorizontal, Info, CalendarPlus } from 'lucide-react';
@@ -14,30 +13,29 @@ interface KpiLibraryPageProps {
   onOpenLogKpiDataModal: (kpi: Kpi) => void;
 }
 
-const getProgressColor = (actual: number, target: number, kpiNameFromContext: string) => {
-    if (target === 0 && actual === 0) return 'bg-success'; 
-    if (target === 0 && actual > 0) return 'bg-danger'; 
-    
-    const percentage = target > 0 ? (actual / target) * 100 : 0;
+const getProgressColor = (kpi: Kpi) => {
+    const { actual, target, lowerIsBetter } = kpi;
 
-    const kpiName = kpiNameFromContext.toLowerCase();
-    if (kpiName.includes("cancelled visits") || kpiName.includes("attrition") || kpiName.includes("absenteeism") || kpiName.includes("turnover")) {
+    if (target === 0 && actual === 0) return 'bg-success'; 
+    if (target === 0 && actual > 0 && !lowerIsBetter) return 'bg-danger'; 
+    
+    if (lowerIsBetter) {
         if (actual <= target) return 'bg-success'; 
         if (actual <= target * 1.2) return 'bg-warning'; 
         return 'bg-danger'; 
     }
-
+    
+    const percentage = target > 0 ? (actual / target) * 100 : 0;
     if (percentage >= 100) return 'bg-success';
     if (percentage >= 70) return 'bg-warning';
     return 'bg-danger';
 };
 
-const getTrendIcon = (actual: number, target: number, kpiNameFromContext: string) => {
+const getTrendIcon = (kpi: Kpi) => {
+    const { actual, target, lowerIsBetter } = kpi;
+
     if (target === 0 && actual === 0) return <Minus size={18} className="text-medium-text" />;
     
-    const kpiName = kpiNameFromContext.toLowerCase();
-    const lowerIsBetter = kpiName.includes("cancelled visits") || kpiName.includes("attrition") || kpiName.includes("absenteeism") || kpiName.includes("turnover");
-
     if (lowerIsBetter) {
         if (actual <= target) return <TrendingDown size={18} className="text-success" />; 
         if (actual > target) return <TrendingUp size={18} className="text-danger" />; 
@@ -106,13 +104,13 @@ export const KpiLibraryPage: React.FC<KpiLibraryPageProps> = ({ kpis, onOpenKpiF
                   <td className="px-4 py-4 whitespace-nowrap">
                       <div className="w-full bg-border-color rounded-full h-2.5">
                           <div 
-                              className={`h-2.5 rounded-full ${getProgressColor(kpi.actual, kpi.target, kpi.name)}`} 
+                              className={`h-2.5 rounded-full ${getProgressColor(kpi)}`} 
                               style={{ width: `${kpi.target > 0 ? Math.min((kpi.actual / kpi.target) * 100, 100) : (kpi.actual > 0 ? (kpi.target === 0 ? 0 : 100) : (kpi.target === 0 ? 100 : 0) )}%` }}
                           ></div>
                       </div>
                   </td>
                   <td className="px-4 py-4 whitespace-nowrap text-center">
-                    {getTrendIcon(kpi.actual, kpi.target, kpi.name)}
+                    {getTrendIcon(kpi)}
                   </td>
                   <td className="px-4 py-4 text-sm text-medium-text truncate max-w-[150px]">
                     {kpi.clientNeedAlignment ? <span title={kpi.clientNeedAlignment}>{kpi.clientNeedAlignment}</span> : 'N/A'}

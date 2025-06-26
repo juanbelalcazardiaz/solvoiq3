@@ -287,12 +287,14 @@ export const App = (): JSX.Element => {
     closeModal();
   };
   const handleDeleteTeamMember = (idToDelete: string) => {
-    const memberToDeleteItem = teamMembers.find(m => m.id === idToDelete);
-    if (memberToDeleteItem?.id === activeUser.id) { alert("Cannot delete your own user profile."); return; }
+    if (idToDelete === activeUser.id) {
+      alert("Cannot delete your own user profile.");
+      return;
+    }
     if (window.confirm(`Are you sure you want to delete team member? This will reassign their tasks to ${activeUser.name} and remove them from client assignments.`)) {
       setTeamMembers(prev => prev.filter(m => m.id !== idToDelete));
       setClients(prevClientsList => prevClientsList.map(c => ({ ...c, assignedTeamMembers: c.assignedTeamMembers.filter(memberId => memberId !== idToDelete) })));
-      setTasks(prevTasksList => prevTasksList.map(t => (t.assignedTo === memberToDeleteItem?.name ? { ...t, assignedTo: activeUser.name } : t)));
+      setTasks(prevTasksList => prevTasksList.map(t => (t.assignedTo === idToDelete ? { ...t, assignedTo: activeUser.id } : t)));
       setOneOnOneSessions(prevSessions => prevSessions.filter(s => s.teamMemberId !== idToDelete));
       setPtlReports(prev => prev.filter(r => r.soulverId !== idToDelete));
       setCoachingFeedForwards(prev => prev.filter(cff => cff.soulverId !== idToDelete));
@@ -381,7 +383,6 @@ export const App = (): JSX.Element => {
   };
 
   const globalActionButtonContainer = document.getElementById('global-action-button-container');
-  const aiChatWidgetContainer = document.getElementById('ai-chat-widget-container'); 
 
   if (showLandingPage) { 
     return <LandingPage onEnterDashboard={handleEnterDashboardFromLanding} />; 
@@ -399,7 +400,6 @@ export const App = (): JSX.Element => {
         </main>
       </div>
       {globalActionButtonContainer && ReactDOM.createPortal( <GlobalActionButton currentPage={currentPage} onOpenClientForm={() => openClientForm('add')} onOpenTaskForm={() => openTaskForm('add')} onOpenKpiForm={() => openKpiForm('add')} onOpenTeamMemberForm={() => openTeamMemberForm('add')} onOpenTemplateForm={() => openTemplateForm('add')} />, globalActionButtonContainer)}
-      {aiChatWidgetContainer && ReactDOM.createPortal( null, aiChatWidgetContainer )} 
 
       {isModalOpen && modalContent && !isTemplatePreviewModalOpen && !isWhatsNewModalOpen && !isOneOnOneSessionsModalOpen && !isOneOnOneFormModalOpen && !isLogKpiDataModalOpen && ( <Modal isOpen={isModalOpen} onClose={closeModal} title={modalTitle}> {modalContent} </Modal> )}
       {isTemplatePreviewModalOpen && selectedTemplateForPreview && ( <Modal isOpen={isTemplatePreviewModalOpen} onClose={closeTemplatePreviewModal} title={selectedTemplateForPreview.name}> <TemplatePreviewContent template={selectedTemplateForPreview} /> </Modal> )}

@@ -27,7 +27,7 @@ export interface Task {
   description: string;
   status: TaskStatus;
   dueDate: string; // ISO string
-  assignedTo: string; // Team member name (aligns with current usage)
+  assignedTo: string; // Team member ID
   clientId: string | null;
   priority: TaskPriority;
   elapsedTimeSeconds?: number; // Added for persistent timer
@@ -168,6 +168,7 @@ export interface Kpi {
   clientNeedAlignment?: string; 
   roiDemonstration?: string; 
   historicalData: KpiHistoricalDataEntry[];
+  lowerIsBetter?: boolean; // Added for more robust progress/trend logic
 }
 
 export enum TemplateCategory {
@@ -227,22 +228,27 @@ export type PageId =
   | 'dashboard' | 'clients' | 'team' | 'tasks' 
   | 'kpi-library' | 'templates' | 'kpi-goals'
   | 'ptl-reports' | 'coaching-feed-forward';
-  // Removed: 'knowledge-center', 'email-tools', 'ai-assistants'
 
 export type SearchResultItem = 
   | { type: 'client'; data: Client }
   | { type: 'teamMember'; data: TeamMember }
   | { type: 'task'; data: Task }
   | { type: 'template'; data: Template };
-  // KnowledgeArticle removed
 
 export interface RecentActivityItem {
   id: string;
-  type: 'task_completed' | 'task_created' | 'client_added' | 'kpi_updated' | 'article_added' | 'team_join';
+  type: 'task_completed' | 'task_created' | 'client_added' | 'kpi_updated' | 'team_join';
   text: string;
   timestamp: string; // ISO string or human-readable like "2 hours ago"
   icon: React.ElementType; // Lucide icon component
   userId?: string; // Optional: ID of user who performed action
+}
+
+export interface ChatMessage {
+  id: string;
+  sender: 'user' | 'ai';
+  text: string;
+  timestamp: string; // ISO string
 }
 
 // --- 1-on-1 Session Feature Types ---
@@ -332,105 +338,5 @@ export interface CoachingFeedForward {
 
 
 export type EditableItem = Client | Task | Kpi | TeamMember | Template | OneOnOneSession | PtlReport | CoachingFeedForward | ClientEmailLog | null; 
-// Removed KnowledgeArticle, ClientEmailLog was already present
 
 export type FormMode = 'add' | 'edit';
-
-
-// Speech Recognition API Type Augmentation
-// Based on MDN and common usage for Web Speech API (experimental)
-
-export interface SpeechRecognitionEventMap {
-  "audiostart": Event;
-  "audioend": Event;
-  "end": Event;
-  "error": SpeechRecognitionErrorEvent; // Use specific event type if available or 'any'
-  "nomatch": SpeechRecognitionEvent; // Use specific event type if available or 'any'
-  "result": SpeechRecognitionEvent; // Use specific event type if available or 'any'
-  "soundstart": Event;
-  "soundend": Event;
-  "speechstart": Event;
-  "speechend": Event;
-  "start": Event;
-}
-
-// Basic definition for SpeechRecognitionEvent, can be expanded
-export interface SpeechRecognitionEvent extends Event {
-  readonly resultIndex: number;
-  readonly results: SpeechRecognitionResultList;
-  // readonlyemma?: any; // For Emma support, if needed
-  // readonlyinterpretation?: any; // For interpretation, if needed
-}
-
-export interface SpeechRecognitionErrorEvent extends Event { // Changed from ErrorEvent to Event for basic compatibility
-  readonly error: string; // Corresponds to SpeechRecognitionErrorCode
-  readonly message: string;
-}
-
-// Basic definition for SpeechRecognitionResultList
-export interface SpeechRecognitionResultList {
-  readonly length: number;
-  item(index: number): SpeechRecognitionResult;
-  [index: number]: SpeechRecognitionResult;
-}
-
-// Basic definition for SpeechRecognitionResult
-export interface SpeechRecognitionResult {
-  readonly isFinal: boolean;
-  readonly length: number;
-  item(index: number): SpeechRecognitionAlternative;
-  [index: number]: SpeechRecognitionAlternative;
-}
-
-// Basic definition for SpeechRecognitionAlternative
-export interface SpeechRecognitionAlternative {
-  readonly transcript: string;
-  readonly confidence: number;
-}
-
-
-export interface SpeechRecognition extends EventTarget {
-  grammars: any; // SpeechGrammarList
-  lang: string;
-  continuous: boolean;
-  interimResults: boolean;
-  maxAlternatives: number;
-  // serviceURI: string; // Deprecated
-
-  onaudiostart: ((this: SpeechRecognition, ev: Event) => any) | null;
-  onaudioend: ((this: SpeechRecognition, ev: Event) => any) | null;
-  onend: ((this: SpeechRecognition, ev: Event) => any) | null;
-  onerror: ((this: SpeechRecognition, ev: SpeechRecognitionErrorEvent) => any) | null;
-  onnomatch: ((this: SpeechRecognition, ev: SpeechRecognitionEvent) => any) | null;
-  onresult: ((this: SpeechRecognition, ev: SpeechRecognitionEvent) => any) | null;
-  onsoundstart: ((this: SpeechRecognition, ev: Event) => any) | null;
-  onsoundend: ((this: SpeechRecognition, ev: Event) => any) | null;
-  onspeechstart: ((this: SpeechRecognition, ev: Event) => any) | null;
-  onspeechend: ((this: SpeechRecognition, ev: Event) => any) | null;
-  onstart: ((this: SpeechRecognition, ev: Event) => any) | null;
-
-  abort(): void;
-  start(): void;
-  stop(): void;
-
-  addEventListener<K extends keyof SpeechRecognitionEventMap>(type: K, listener: (this: SpeechRecognition, ev: SpeechRecognitionEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-  addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-  removeEventListener<K extends keyof SpeechRecognitionEventMap>(type: K, listener: (this: SpeechRecognition, ev: SpeechRecognitionEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-  removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-}
-
-declare global {
-  interface Window {
-    SpeechRecognition?: { new(): SpeechRecognition };
-    webkitSpeechRecognition?: { new(): SpeechRecognition };
-  }
-}
-
-// --- AI Chat Widget Types ---
-export interface ChatMessage {
-  id: string;
-  sender: 'user' | 'ai';
-  text: string;
-  timestamp: string; // ISO string
-}
-// --- End AI Chat Widget Types ---
