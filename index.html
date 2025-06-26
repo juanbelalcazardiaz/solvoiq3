@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SolvoIQ</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧠</text></svg>">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: [
+                'Inter', 
+                'system-ui',
+                '-apple-system',
+                'BlinkMacSystemFont',
+                '"Segoe UI"',
+                'Roboto',
+                '"Helvetica Neue"',
+                'Arial',
+                '"Noto Sans"',
+                'sans-serif',
+                '"Apple Color Emoji"',
+                '"Segoe UI Emoji"',
+                '"Segoe UI Symbol"',
+                '"Noto Color Emoji"',
+              ],
+            },
+            colors: {
+              'primary': { // GitHub Blue
+                DEFAULT: '#58A6FF', 
+                light: 'rgba(88, 166, 255, 0.1)', // Softer light for active sidebar item
+                dark: '#388BFD',   
+              },
+              'light-bg': '#0D1117',  // Main page background (very dark, GitHub Dark Default body)
+              'sidebar-bg': '#161B22', // Sidebar component background, Kanban column background (GitHub Dark Dimmed body/sidebar)
+              'input-bg': '#21262D', // Cards, Modals, Input fields, other Panels (GitHub Dark Dimmed cards/inputs)
+              
+              'dark-text': '#E6EDF3', // Main text color (slightly lighter for better contrast)
+              'medium-text': '#8B949E', // Secondary text color (GitHub Dark Secondary text)
+              'light-text': '#6E7681', // Muted/placeholder text (GitHub Dark Tertiary text)
+              
+              'border-color': '#30363D', // Default border color (GitHub Dark Border)
+              'light-border': '#484F58', // Lighter/subtle internal border or dividers
+
+              'placeholder-color': '#6E7681', // Explicit for placeholder, maps to light-text
+
+              'success': '#3FB950', // Green text (GitHub Success)
+              'warning': '#F0883E', // Orange text (GitHub Warning)
+              'danger': '#F85149', // Red text (GitHub Danger)
+
+              'success-light': 'rgba(46, 160, 67, 0.15)', // Translucent green background (GitHub Success bg)
+              'warning-light': 'rgba(240, 136, 62, 0.15)', // Translucent orange background (GitHub Warning bg)
+              'danger-light': 'rgba(248, 81, 73, 0.15)',   // Translucent red background (GitHub Danger bg)
+
+              // Tag specific colors from GitHub's label system
+              'tag-blue-text': '#79C0FF', 
+              'tag-blue-bg': 'rgba(56, 139, 253, 0.1)',
+              'tag-green-text': '#56D364', 
+              'tag-green-bg': 'rgba(35, 134, 54, 0.15)',
+              'tag-yellow-text': '#E3B341', 
+              'tag-yellow-bg': 'rgba(187, 128, 9, 0.15)',
+              'tag-orange-text': '#FFA657', 
+              'tag-orange-bg': 'rgba(202, 90, 33, 0.15)',
+              'tag-red-text': '#FF857F', 
+              'tag-red-bg': 'rgba(215, 58, 73, 0.1)',
+              'tag-purple-text': '#D2A8FF', 
+              'tag-purple-bg': 'rgba(139, 92, 246, 0.1)',
+              'tag-pink-text': '#FF80CA', 
+              'tag-pink-bg': 'rgba(211, 55, 125, 0.1)',
+            },
+            boxShadow: {
+              'subtle': '0 1px 0 rgba(48, 54, 61, 0.6)', 
+              'card': '0 0 0 1px #30363D, 0 2px 4px rgba(0,0,0,0.15)', // Slightly softer card shadow
+              'card-hover': '0 0 0 1px #484F58, 0 6px 12px rgba(0,0,0,0.25)', // More pronounced on hover
+              'modal': '0 0 0 1px #30363D, 0 16px 48px rgba(0,0,0,0.6)', 
+              'hero-glow': '0 0 60px -15px rgba(88, 166, 255, 0.5)', 
+              'hero-glow-light': '0 0 25px -5px rgba(88, 166, 255, 0.3)', // New, softer glow for buttons
+              'landing-card': '0 4px 12px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.05)',
+              'landing-card-hover': '0 8px 24px rgba(0,0,0,0.4), 0 0 0 1px rgba(88, 166, 255, 0.2)',
+            },
+            animation: {
+              modalShow: 'modalShow 0.3s ease-out forwards',
+              fabPulse: 'fabPulse 2s infinite cubic-bezier(0.4, 0, 0.6, 1)',
+              emptyStateIconFloat: 'emptyStateIconFloat 3s ease-in-out infinite',
+              panelShow: 'panelShow 0.3s ease-out forwards',
+              panelHide: 'panelHide 0.3s ease-in forwards',
+              slideInUpNew: 'slideInUpNew 1s ease-out forwards', 
+              fadeIn: 'fadeIn 1s ease-out forwards',
+              dynamicHeroBg: 'dynamicHeroBg 20s ease-in-out infinite alternate',
+              heroShapeSubtlePlexus: 'heroShapeSubtlePlexusAnim 25s ease-in-out infinite alternate', 
+              heroShapeSubtleOrbit: 'heroShapeSubtleOrbitAnim 30s linear infinite',
+              aiGlow: 'aiGlowAnim 5s ease-in-out infinite alternate',
+              ctaPulseStrong: 'ctaPulseStrongAnim 2s infinite cubic-bezier(0.4, 0, 0.6, 1)',
+            },
+            keyframes: {
+              modalShow: {
+                '0%': { opacity: '0', transform: 'translateY(-10px) scale(0.98)' },
+                '100%': { opacity: '1', transform: 'translateY(0) scale(1)' },
+              },
+              fabPulse: {
+                '0%, 100%': { boxShadow: '0 0 0 0 rgba(88, 166, 255, 0.4)' },
+                '50%': { boxShadow: '0 0 0 12px rgba(88, 166, 255, 0)' },
+              },
+              emptyStateIconFloat: {
+                '0%, 100%': { transform: 'translateY(0)' },
+                '50%': { transform: 'translateY(-8px)' }, // Slightly more float
+              },
+              panelShow: {
+                '0%': { transform: 'translateX(100%)' },
+                '100%': { transform: 'translateX(0%)' },
+              },
+              panelHide: {
+                '0%': { transform: 'translateX(0%)' },
+                '100%': { transform: 'translateX(100%)' },
+              },
+              dynamicHeroBg: { 
+                '0%': { backgroundPosition: '0% 50%' },
+                '50%': { backgroundPosition: '100% 50%' },
+                '100%': { backgroundPosition: '0% 50%' },
+              },
+              heroShapeSubtlePlexusAnim: { 
+                '0%': { transform: 'translate(0px, 0px) scale(1)', opacity: '0.1' },
+                '25%': { transform: 'translate(10px, -15px) scale(1.03)', opacity: '0.15' },
+                '50%': { transform: 'translate(-15px, 5px) scale(0.97)', opacity: '0.08' },
+                '75%': { transform: 'translate(5px, 10px) scale(1.01)', opacity: '0.12' },
+                '100%': { transform: 'translate(0px, 0px) scale(1)', opacity: '0.1' },
+              },
+              heroShapeSubtleOrbitAnim: { 
+                '0%': { transform: 'rotate(0deg) translateX(20px) rotate(0deg) scale(1)', opacity: '0.12' },
+                '100%': { transform: 'rotate(360deg) translateX(20px) rotate(-360deg) scale(1.05)', opacity: '0.18' },
+              },
+              aiGlowAnim: { 
+                '0%': { boxShadow: '0 0 20px rgba(88, 166, 255, 0.1)' },
+                '50%': { boxShadow: '0 0 35px rgba(88, 166, 255, 0.25)' },
+                '100%': { boxShadow: '0 0 20px rgba(88, 166, 255, 0.1)' },
+              },
+              ctaPulseStrongAnim: { 
+                '0%, 100%': { transform: 'scale(1)', boxShadow: '0 0 0 0 rgba(88, 166, 255, 0.4)' },
+                '50%': { transform: 'scale(1.05)', boxShadow: '0 0 15px 8px rgba(88, 166, 255, 0.2)' },
+              },
+              slideInUpNew: { 
+                '0%': { opacity: '0', transform: 'translateY(20px) scale(0.99)' },
+                '100%': { opacity: '1', transform: 'translateY(0) scale(1)' },
+              },
+              fadeIn: { 
+                '0%': { opacity: '0' },
+                '100%': { opacity: '1' },
+              },
+            }
+          }
+        }
+      }
+    </script>
+<style>
+  /* Custom Scrollbar for Webkit Browsers */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #161B22; /* sidebar-bg */
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #30363D; /* border-color */
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #484F58; /* light-border */
+  }
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: #0D1117; /* light-bg, slightly darker for contrast within modals/panels */
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #21262D; /* input-bg */
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #30363D; /* border-color */
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.7; transform: scale(1.3); }
+  }
+  .animate-pulse-dot {
+    animation: pulse-dot 1.5s infinite ease-in-out;
+  }
+  
+  .slide-content-new {
+    animation: slideInUpNew 0.8s ease-out forwards;
+  }
+  .slide-content-new.delayed-1 { animation-delay: 0.15s; }
+  .slide-content-new.delayed-2 { animation-delay: 0.3s; }
+  .slide-content-new.delayed-3 { animation-delay: 0.45s; }
+  .slide-content-new.delayed-4 { animation-delay: 0.6s; }
+
+  .presentation-slide {
+    scroll-snap-align: start;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 3rem 1.5rem;
+    box-sizing: border-box;
+  }
+  @media (min-width: 768px) { 
+    .presentation-slide {
+      padding: 4rem 2rem;
+    }
+  }
+  
+  .dynamic-hero-bg {
+    background: radial-gradient(ellipse at 50% 20%, #1a222c 5%, #0D1117 80%);
+    background-size: 150% 150%; /* Control the spread of the gradient */
+    /* Removed animation to make it static radial gradient */
+  }
+  
+  .hero-bg-shape {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(40px); 
+    mix-blend-mode: screen; 
+    will-change: transform, opacity; 
+  }
+
+  /* Enhanced Focus Styles */
+  input:focus, select:focus, textarea:focus, button:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px theme('colors.input-bg'), 0 0 0 4px theme('colors.primary.DEFAULT');
+  }
+  /* For elements that might not have input-bg directly behind them */
+  button.bg-primary:focus-visible {
+     box-shadow: 0 0 0 2px theme('colors.sidebar-bg'), 0 0 0 4px theme('colors.primary.DEFAULT');
+  }
+</style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.1.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.1.0/",
+    "react/": "https://esm.sh/react@^19.1.0/",
+    "lucide-react": "https://esm.sh/lucide-react@^0.519.0",
+    "react-dom": "https://esm.sh/react-dom@^19.1.0",
+    "@google/genai": "https://esm.sh/@google/genai@^1.6.0",
+    "jspdf": "https://esm.sh/jspdf@^3.0.1"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body class="h-screen antialiased font-sans bg-light-bg text-dark-text overflow-x-hidden">
+    <div id="root" class="h-full"></div>
+    <div id="global-action-button-container" class="fixed bottom-6 right-6 z-40"></div>
+    <div id="ai-chat-widget-container" class="fixed bottom-6 left-6 z-40"></div>
+    <script defer="defer" src="dist/bundle.js"></script>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>
