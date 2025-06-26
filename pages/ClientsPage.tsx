@@ -611,7 +611,7 @@ const ClientDetailPanel: React.FC<ClientDetailPanelProps> = ({
                       </li>
                     ))}
                   </ul>
-                ))}
+                )}
               </div>
             )}
              {detailPanelTab === 'audit' && (
