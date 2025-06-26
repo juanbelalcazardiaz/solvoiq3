@@ -4,10 +4,10 @@
   "description": "SolvoIQ Application",
   "private": true,
   "scripts": {
-    "build:esbuild": "esbuild index.tsx --bundle --outfile=dist/bundle.js --platform=browser --define:process.env.API_KEY=\"'$API_KEY'\" --sourcemap",
-    "build:copy-assets": "node -e \"const fs = require('fs'); const path = require('path'); const distDir = 'dist'; if (!fs.existsSync(distDir)) fs.mkdirSync(distDir, { recursive: true }); fs.copyFileSync('index.html', path.join(distDir, 'index.html')); fs.copyFileSync('metadata.json', path.join(distDir, 'metadata.json'));\"",
-    "build": "npm run build:esbuild && npm run build:copy-assets",
-    "start:dev": "esbuild index.tsx --bundle --outfile=dist/bundle.js --platform=browser --servedir=. --define:process.env.API_KEY='\"'YOUR_DEV_API_KEY_HERE'\"' --sourcemap"
+    "build:esbuild": "esbuild index.tsx --bundle --outfile=dist/bundle.js --platform=browser --define:process.env.API_KEY='\"'$API_KEY'\"' --sourcemap",
+    "build:copy-assets": "cp index.html dist/index.html && cp metadata.json dist/metadata.json",
+    "build": "mkdir -p dist && npm run build:esbuild && npm run build:copy-assets",
+    "start:dev": "esbuild index.tsx --bundle --outfile=bundle.js --platform=browser --servedir=. --define:process.env.API_KEY='\"'YOUR_DEV_API_KEY_HERE'\"' --sourcemap"
   },
   "dependencies": {
     "@google/genai": "^1.6.0",
@@ -17,7 +17,7 @@
     "react-dom": "^19.1.0"
   },
   "devDependencies": {
-    "@types/react": "^18.0.0", 
+    "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
     "esbuild": "^0.20.0",
     "typescript": "^5.0.0"
